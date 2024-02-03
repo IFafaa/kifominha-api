@@ -3,9 +3,10 @@ import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { UserModule } from "./modules/user/user.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { AuthMiddleware } from "./common/middlewares/auth.middleware";
+import { FoodModule } from "./modules/food/food.module";
 
 @Module({
-  imports: [DatabaseModule, UserModule, AuthModule],
+  imports: [DatabaseModule, UserModule, AuthModule,FoodModule],
   controllers: [],
   providers: [],
 })
