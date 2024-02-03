@@ -1,27 +1,25 @@
 import { DatabaseModule } from "./database/database.module";
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { UserModule } from "./modules/user/user.module";
 import { AuthModule } from "./modules/auth/auth.module";
+import { AuthMiddleware } from "./common/middlewares/auth.middleware";
 
 @Module({
   imports: [DatabaseModule, UserModule, AuthModule],
   controllers: [],
   providers: [],
 })
-// implements NestModule
-export class AppModule {
-  // configure(consumer: MiddlewareConsumer) {
-  //   consumer
-  //     .apply(AuthMiddleware)
-  //     .exclude(
-  //       "auth/login",
-  //       "auth/user/data",
-  //       "auth/user/address/:id",
-  //       "auth/verify/send/email",
-  //       "auth/verify/auth/email",
-  //       "webhook/payment",
-  //       "plan",
-  //     )
-  //     .forRoutes("*");
-  // }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .exclude(
+        "auth/login",
+        "auth/register/user",
+        "auth/register/restaurant",
+        "auth/auth/user/email/:id",
+        "auth/auth/restaurant/email/:id",
+      )
+      .forRoutes("*");
+  }
 }
