@@ -7,18 +7,17 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const options = new DocumentBuilder()
-    .setTitle('PACK APP')
-    .setDescription('')
-    .setVersion('1.0')
-    .addServer('http://localhost:3000/', 'Local environment')
-    // .addServer('https://staging.yourapi.com/', 'Staging')
-    // .addServer('https://production.yourapi.com/', 'Production')
-    .addTag('PACK APP')
+    .setTitle("KIFOMINHA APP")
+    .setDescription("")
+    .setVersion("1.0")
+    .addServer("http://localhost:3000/", "Local environment")
+    .addTag("KIFOMINHA APP")
     .build();
 
-const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api-docs', app, document);
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup("api-docs", app, document);
   dotenv.config();
+  app.enableCors({ origin: "*" });
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(process.env.PORT || 3000);
 }

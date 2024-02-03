@@ -3,9 +3,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
-import { UserService } from "../user/user.service";
-import { RegisterUserDto } from "./dtos/register-user.dto";
-import { User } from "../user/entities/user.entity";
+import { RegisterClientDto } from "./dtos/register-client.dto";
 import { EmailService } from "src/common/services/email.service";
 import { verificationEmailTemplate } from "src/common/templates/verification-email.template";
 import { CodeHelper } from "src/common/helpers/codes.helper";
@@ -16,24 +14,26 @@ import { Restaurant } from "../restaurant/entities/restaurant.entity";
 import { TokenService } from "src/common/services/token.service";
 import { LoginDto } from "./dtos/login.dto";
 import * as bcrypt from "bcrypt";
+import { ClientService } from "../client/client.service";
+import { Client } from "../client/entities/client.entity";
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
+    private readonly clientService: ClientService,
     private readonly emailService: EmailService,
     private readonly restaurantService: RestaurantService,
     private readonly tokenService: TokenService,
   ) {}
 
-  async registerUser(_user: RegisterUserDto) {
+  async registerClient(_client: RegisterClientDto) {
     try {
       if (
         await this.verifyIfWasRegistered({
-          cpf: _user.cpf,
+          cpf: _client.cpf,
           cnpj: undefined,
-          email: _user.email,
-          phone: _user.phone,
+          email: _client.email,
+          phone: _client.phone,
         })
       ) {
         throw new BadRequestException({
@@ -41,10 +41,10 @@ export class AuthService {
         });
       }
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(_user.password, salt);
+      const hashedPassword = await bcrypt.hash(_client.password, salt);
 
-      const user: Omit<User, "_id"> = {
-        ..._user,
+      const client: Omit<Client, "_id"> = {
+        ..._client,
         auth: {
           email: {
             authenticated: false,
@@ -53,12 +53,12 @@ export class AuthService {
         },
         password: hashedPassword,
       };
-      const userCreated = await this.userService.create(user);
-      await this.sendVerificationEmail(userCreated);
+      const clientCreated = await this.clientService.create(client);
+      await this.sendVerificationEmail(clientCreated);
       return {
-        message: "Usuário cadastrado com sucesso!",
+        message: "Cliente cadastrado com sucesso!",
         data: {
-          id: userCreated._id,
+          id: clientCreated._id,
         },
       };
     } catch (error) {
@@ -107,26 +107,26 @@ export class AuthService {
     }
   }
 
-  async authUserEmail(id: ObjectId, code: string) {
+  async authClientEmail(id: ObjectId, code: string) {
     try {
-      const user = await this.userService.findOneById(id);
-      if (user.auth.email.authenticated) {
+      const client = await this.clientService.findOneById(id);
+      if (client.auth.email.authenticated) {
         throw new BadRequestException({
           message: "Esse usuário já teve o email verificado.",
         });
       }
-      if (user.auth.email.code !== code) {
+      if (client.auth.email.code !== code) {
         throw new BadRequestException({
           message: "O código fornecido não confere com o enviado.",
         });
       }
-      user.auth.email.code = "";
-      user.auth.email.authenticated = true;
+      client.auth.email.code = "";
+      client.auth.email.authenticated = true;
 
-      const userUpdated = await this.userService.update(user._id, user);
+      const clientUpdated = await this.clientService.update(client._id, client);
       return {
         message: "Email verificado com sucesso.",
-        data: await this.tokenService.getTokenClient<User>(userUpdated),
+        data: await this.tokenService.getTokenClient<Client>(clientUpdated),
       };
     } catch (error) {
       throw error;
@@ -187,19 +187,21 @@ export class AuthService {
         });
       }
       return {
-        data: await this.tokenService.getTokenClient(client),
+        data: {
+          access_token: await this.tokenService.getTokenClient(client),
+        },
       };
     } catch (error) {
       throw error;
     }
   }
 
-  async sendVerificationEmail(client: User | Restaurant) {
+  async sendVerificationEmail(client: Client | Restaurant) {
     try {
       const verificationCode = CodeHelper.verificationCode();
       client.auth.email.code = verificationCode;
-      if (client instanceof User) {
-        await this.userService.update(client._id, client);
+      if (client instanceof Client) {
+        await this.clientService.update(client._id, client);
       }
       if (client instanceof Restaurant) {
         await this.restaurantService.update(client._id, client);
@@ -221,7 +223,7 @@ export class AuthService {
     phone?: string;
   }) {
     try {
-      const userIsRegistered = await this.userService.userIsRegistered({
+      const clientIsRegistered = await this.clientService.clientIsRegistered({
         email: options.email,
         cpf: options.cpf,
         phone: options.phone,
@@ -232,7 +234,7 @@ export class AuthService {
           cnpj: options.cnpj,
           phone: options.phone,
         });
-      return userIsRegistered || restaurantIsRegistered;
+      return clientIsRegistered || restaurantIsRegistered;
     } catch (error) {
       throw error;
     }

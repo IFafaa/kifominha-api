@@ -1,7 +1,7 @@
 import { Body, Controller, Param, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AuthService } from "./auth.service";
-import { RegisterUserDto } from "./dtos/register-user.dto";
+import { RegisterClientDto } from "./dtos/register-client.dto";
 import { ObjectId } from "typeorm";
 import { AuthEmailDto } from "./dtos/auth-email.dto";
 import { RegisterRestaurantDto } from "./dtos/register-restaurant.dto";
@@ -17,9 +17,9 @@ export class AuthController {
     return await this.authService.login(loginDto);
   }
 
-  @Post("register/user")
-  async registerUser(@Body() registerUserDto: RegisterUserDto) {
-    return await this.authService.registerUser(registerUserDto);
+  @Post("register/client")
+  async registerClient(@Body() registerClientDto: RegisterClientDto) {
+    return await this.authService.registerClient(registerClientDto);
   }
 
   @Post("register/restaurant")
@@ -31,12 +31,12 @@ export class AuthController {
     );
   }
 
-  @Post("verify/user/email/:id")
-  async authenticateUserEmail(
+  @Post("verify/client/email/:id")
+  async authenticateClientEmail(
     @Param("id") id: ObjectId,
     @Body() authEmailDto: AuthEmailDto,
   ) {
-    return await this.authService.authUserEmail(id, authEmailDto.code);
+    return await this.authService.authClientEmail(id, authEmailDto.code);
   }
 
   @Post("verify/restaurant/email/:id")

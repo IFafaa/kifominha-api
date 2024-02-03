@@ -1,7 +1,7 @@
 import { IsNotEmpty } from "class-validator";
-import { User } from "src/modules/user/entities/user.entity";
+import { Client } from "src/modules/client/entities/client.entity";
 
-export class RegisterUserDto extends User {
+export class RegisterClientDto extends Client {
   @IsNotEmpty()
   email: string;
 

@@ -1,16 +1,16 @@
 import { Column, Entity, ObjectId, ObjectIdColumn } from "typeorm";
 
-export class UserAuthConfig {
+export class ClientAuthConfig {
   authenticated: boolean;
   code: string;
 }
 
-export class UserAuth {
-  email: UserAuthConfig;
+export class ClientAuth {
+  email: ClientAuthConfig;
 }
 
-@Entity("users")
-export class User {
+@Entity("clients")
+export class Client {
   @ObjectIdColumn({ name: "_id" })
   _id: ObjectId;
 
@@ -30,5 +30,5 @@ export class User {
   password: string;
 
   @Column("auth")
-  auth: UserAuth;
+  auth: ClientAuth;
 }

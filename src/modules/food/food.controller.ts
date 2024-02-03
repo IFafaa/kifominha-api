@@ -11,9 +11,9 @@ import {
 import { FoodService } from "./food.service";
 import { ApiTags } from "@nestjs/swagger";
 import { ObjectId } from "typeorm";
-import { User } from "../user/entities/user.entity";
 import { CreateFoodDto } from "./dtos/create-food.dto";
 import { Restaurant } from "../restaurant/entities/restaurant.entity";
+import { Food } from "./entities/food.entity";
 
 @ApiTags("Comidas")
 @Controller("food")
@@ -23,7 +23,7 @@ export class FoodController {
   @Post()
   async create(
     @Body() body: CreateFoodDto,
-    @Headers("client") restaurant: Restaurant,
+    @Headers("user") restaurant: Restaurant,
   ) {
     return this.foodService.create(body, restaurant);
   }
@@ -41,9 +41,9 @@ export class FoodController {
   @Put(":id")
   async update(
     @Param("id") id: ObjectId,
-    @Body() updateUserDto: Partial<User>,
+    @Body() updateFoodDto: Partial<Food>,
   ) {
-    return await this.foodService.update(id, updateUserDto);
+    return await this.foodService.update(id, updateFoodDto);
   }
 
   @Delete(":id")
