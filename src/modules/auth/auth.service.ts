@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { UserService } from "../user/user.service";
 import { RegisterUserDto } from "./dtos/register-user.dto";
 import { User } from "../user/entities/user.entity";
@@ -11,6 +15,7 @@ import { RegisterRestaurantDto } from "./dtos/register-restaurant.dto";
 import { Restaurant } from "../restaurant/entities/restaurant.entity";
 import { TokenService } from "src/common/services/token.service";
 import { LoginDto } from "./dtos/login.dto";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AuthService {
@@ -35,19 +40,21 @@ export class AuthService {
           message: "Usuário ou restaurante já cadastrado. Tente fazer o login.",
         });
       }
-      const verificationCode = CodeHelper.verificationCode();
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(_user.password, salt);
+
       const user: Omit<User, "_id"> = {
         ..._user,
         auth: {
           email: {
             authenticated: false,
-            code: verificationCode,
+            code: null,
           },
         },
+        password: hashedPassword,
       };
       const userCreated = await this.userService.create(user);
-      await this.sendVerificationEmail(user.email, verificationCode);
-
+      await this.sendVerificationEmail(userCreated);
       return {
         message: "Usuário cadastrado com sucesso!",
         data: {
@@ -73,18 +80,22 @@ export class AuthService {
           message: "Usuário ou restaurante já cadastrado. Tente fazer o login.",
         });
       }
-      const verificationCode = CodeHelper.verificationCode();
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(_restaurant.password, salt);
+
       const restaurant: Omit<Restaurant, "_id"> = {
         ..._restaurant,
         auth: {
           email: {
             authenticated: false,
-            code: verificationCode,
+            code: null,
           },
         },
+        password: hashedPassword,
       };
       const restaurantCreated = await this.restaurantService.create(restaurant);
-      await this.sendVerificationEmail(restaurant.email, verificationCode);
+      await this.sendVerificationEmail(restaurantCreated);
       return {
         message: "Restaurante cadastrado com sucesso!",
         data: {
@@ -154,44 +165,49 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    // try {
-    //   const client = await this.verifyIfWasRegistered({
-    //     email: loginDto.email,
-    //   });
+    try {
+      const client = await this.verifyIfWasRegistered({
+        email: loginDto.email,
+      });
 
-    //   if (
-    //     client === null ||
-    //     !(await bcrypt.compare(login.password, user.password))
-    //   ) {
-    //     throw new UnauthorizedException({
-    //       message: "Verifique seu CPF ou senha e tente novamente.",
-    //     });
-    //   }
+      if (
+        client === null ||
+        !(await bcrypt.compare(loginDto.password, client.password))
+      ) {
+        throw new UnauthorizedException({
+          message: "Verifique seu e-mail ou senha e tente novamente.",
+        });
+      }
 
-    //   if (!user.auth.email.isVerified) {
-    //     await this.sendVerificationEmail(user.email);
-    //     throw new BadRequestException({
-    //       message:
-    //         "Você ainda não verificou seu e-mail, foi enviado um código para o seu e-mail para a verificação.",
-    //     });
-    //   }
-    //   user.last_access = new Date();
-    //   const userUpdated = await this.userService.update(user.id, user);
-
-    //   return {
-    //     data: await this.tokenService.getUserToken(userUpdated),
-    //   };
-    // } catch (error) {
-    //   throw error;
-    // }
+      if (!client.auth.email.authenticated) {
+        await this.sendVerificationEmail(client);
+        throw new BadRequestException({
+          message:
+            "Você ainda não verificou seu e-mail, foi enviado um código para o seu e-mail para a verificação.",
+        });
+      }
+      return {
+        data: await this.tokenService.getTokenClient(client),
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 
-  async sendVerificationEmail(email: string, code: string) {
+  async sendVerificationEmail(client: User | Restaurant) {
     try {
+      const verificationCode = CodeHelper.verificationCode();
+      client.auth.email.code = verificationCode;
+      if (client instanceof User) {
+        await this.userService.update(client._id, client);
+      }
+      if (client instanceof Restaurant) {
+        await this.restaurantService.update(client._id, client);
+      }
       return await this.emailService.sendEmail(
-        email,
+        client.email,
         "Confirme seu endereço de e-mail - Código de Verificação",
-        verificationEmailTemplate(code),
+        verificationEmailTemplate(verificationCode),
       );
     } catch (error) {
       throw error;
