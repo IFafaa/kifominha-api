@@ -31,7 +31,7 @@ export class AuthController {
     );
   }
 
-  @Post("auth/user/email/:id")
+  @Post("verify/user/email/:id")
   async authenticateUserEmail(
     @Param("id") id: ObjectId,
     @Body() authEmailDto: AuthEmailDto,
@@ -39,7 +39,7 @@ export class AuthController {
     return await this.authService.authUserEmail(id, authEmailDto.code);
   }
 
-  @Post("auth/restaurant/email/:id")
+  @Post("verify/restaurant/email/:id")
   async authenticateRestaurantEmail(
     @Param("id") id: ObjectId,
     @Body() authEmailDto: AuthEmailDto,
