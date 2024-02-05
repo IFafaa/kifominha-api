@@ -25,10 +25,42 @@ export class FoodService {
     }
   }
 
-  async findBy(filter: Partial<Food>): Promise<Food | null> {
+  async findBy(filter: Partial<Food>): Promise<Food[]> {
     try {
-      const food = await this.repository.findOne({ where: filter });
-      return food;
+      const foods = await this.repository.find();
+
+      for (const key in filter) {
+        if (
+          filter[key] === "undefined" ||
+          filter[key] === null ||
+          filter[key] === undefined
+        ) {
+          delete filter[key];
+        }
+      }
+      if (filter.name && filter.description) {
+        return foods.filter(
+          (food) =>
+            food.name.toLowerCase().includes(filter.name.toLowerCase()) ||
+            food.description
+              .toLowerCase()
+              .includes(filter.description.toLowerCase()),
+        );
+      }
+      return foods;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findByRestaurantId(restaurant_id: ObjectId): Promise<Food[]> {
+    try {
+      const foods = await this.repository.find({
+        where: {
+          restaurant_id: restaurant_id,
+        },
+      });
+      return foods;
     } catch (error) {
       throw error;
     }

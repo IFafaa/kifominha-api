@@ -4,9 +4,16 @@ import { ClientModule } from "./modules/client/client.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { AuthMiddleware } from "./common/middlewares/auth.middleware";
 import { FoodModule } from "./modules/food/food.module";
+import { CategoryModule } from "./modules/category/category.module";
 
 @Module({
-  imports: [DatabaseModule, ClientModule, AuthModule, FoodModule],
+  imports: [
+    DatabaseModule,
+    ClientModule,
+    AuthModule,
+    FoodModule,
+    CategoryModule,
+  ],
   controllers: [],
   providers: [],
 })
@@ -15,11 +22,13 @@ export class AppModule implements NestModule {
     consumer
       .apply(AuthMiddleware)
       .exclude(
+        "auth",
         "auth/login",
         "auth/register/client",
         "auth/register/restaurant",
         "auth/verify/client/email/:id",
         "auth/verify/restaurant/email/:id",
+        "category",
       )
       .forRoutes("*");
   }

@@ -37,7 +37,7 @@ export class AuthService {
         })
       ) {
         throw new BadRequestException({
-          message: "Usuário ou restaurante já cadastrado. Tente fazer o login.",
+          message: "Cliente ou restaurante já cadastrado. Tente fazer o login.",
         });
       }
       const salt = await bcrypt.genSalt(10);
@@ -77,7 +77,7 @@ export class AuthService {
         })
       ) {
         throw new BadRequestException({
-          message: "Usuário ou restaurante já cadastrado. Tente fazer o login.",
+          message: "Cliente ou restaurante já cadastrado. Tente fazer o login.",
         });
       }
 
@@ -112,7 +112,7 @@ export class AuthService {
       const client = await this.clientService.findOneById(id);
       if (client.auth.email.authenticated) {
         throw new BadRequestException({
-          message: "Esse usuário já teve o email verificado.",
+          message: "Esse cliente já teve o email verificado.",
         });
       }
       if (client.auth.email.code !== code) {
@@ -126,7 +126,10 @@ export class AuthService {
       const clientUpdated = await this.clientService.update(client._id, client);
       return {
         message: "Email verificado com sucesso.",
-        data: await this.tokenService.getTokenClient<Client>(clientUpdated),
+        data: {
+          access_token:
+            await this.tokenService.getTokenClient<Client>(clientUpdated),
+        },
       };
     } catch (error) {
       throw error;
@@ -155,9 +158,12 @@ export class AuthService {
       );
       return {
         message: "Email verificado com sucesso.",
-        data: await this.tokenService.getTokenClient<Restaurant>(
-          restaurantUpdated,
-        ),
+        data: {
+          access_token:
+            await this.tokenService.getTokenClient<Restaurant>(
+              restaurantUpdated,
+            ),
+        },
       };
     } catch (error) {
       throw error;

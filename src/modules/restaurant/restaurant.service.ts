@@ -49,7 +49,12 @@ export class RestaurantService {
 
   async findAll() {
     try {
-      const restaurant = await this.repository.find();
+      const restaurant = (await this.repository.find())
+        .map((restaurant) => ({
+          ...restaurant,
+          password: undefined,
+        }))
+        .filter((restaurant) => restaurant.auth.email.authenticated);
       return restaurant;
     } catch (error) {
       throw error;
@@ -61,6 +66,7 @@ export class RestaurantService {
       const restaurant = await this.repository.findOne({
         _id: new ObjectId(id),
       } as any);
+      delete restaurant.password;
       return restaurant;
     } catch (error) {
       throw error;

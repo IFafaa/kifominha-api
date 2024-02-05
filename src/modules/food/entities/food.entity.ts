@@ -1,7 +1,7 @@
+import { Category } from "src/modules/category/entities/category.entity";
 import { Column, Entity, ObjectId, ObjectIdColumn } from "typeorm";
 
 @Entity("foods")
-@Entity("restaurants")
 export class Food {
   @ObjectIdColumn({ name: "_id" })
   _id: ObjectId;
@@ -23,4 +23,7 @@ export class Food {
 
   @Column("serve")
   serve: number;
+
+  @Column("category")
+  category: Category;
 }

@@ -1,5 +1,6 @@
 import { IsNotEmpty } from "class-validator";
 import { Food } from "../entities/food.entity";
+import { Category } from "src/modules/category/entities/category.entity";
 
 export class CreateFoodDto extends Food {
   @IsNotEmpty()
@@ -12,4 +13,6 @@ export class CreateFoodDto extends Food {
   price: number;
   @IsNotEmpty()
   serve: number;
+  @IsNotEmpty()
+  category: Category;
 }

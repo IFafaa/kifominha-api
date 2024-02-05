@@ -1,13 +1,13 @@
+import { Category } from "src/modules/category/entities/category.entity";
 import { Column, Entity, ObjectId, ObjectIdColumn } from "typeorm";
 
 export class Address {
-  zip_code: string;
+  cep: string;
   state: string;
   city: string;
   neighborhood: string;
   street: string;
   number: string;
-  complement?: string;
 }
 
 export class RestaurantAuthConfig {
@@ -30,6 +30,9 @@ export class Restaurant {
   @Column("name")
   name: string;
 
+  @Column("categories")
+  categories: Category[];
+
   @Column("password")
   password: string;
 
@@ -45,6 +48,6 @@ export class Restaurant {
   @Column("address")
   address: Address;
 
-  @Column("image")
-  image: string;
+  @Column("logo")
+  logo: string;
 }

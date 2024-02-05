@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from "@nestjs/common";
 import { FoodService } from "./food.service";
 import { ApiTags } from "@nestjs/swagger";
@@ -28,9 +29,19 @@ export class FoodController {
     return this.foodService.create(body, restaurant);
   }
 
+  // @Get()
+  // async findAll() {
+  //   return await this.foodService.findAll();
+  // }
+
   @Get()
-  async findAll() {
-    return await this.foodService.findAll();
+  async findBy(@Query() params: Partial<Food>) {
+    return await this.foodService.findBy(params);
+  }
+
+  @Get("by/restaurant/:id")
+  async findByRestaurantId(@Param("id") restaurant_id: ObjectId) {
+    return await this.foodService.findByRestaurantId(restaurant_id);
   }
 
   @Get(":id")

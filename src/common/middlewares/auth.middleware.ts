@@ -19,7 +19,7 @@ export class AuthMiddleware implements NestMiddleware {
         req.headers["user"] = decoded
         next();
       } catch (error) {
-        throw new UnauthorizedException({ message: "Token inválido ou expirado." });
+        throw new UnauthorizedException({ message: "Sua sessão expirou." });
       }
     } else {
       throw new UnauthorizedException({ message: "Por favor, envie o token." });

@@ -1,4 +1,5 @@
 import { IsNotEmpty } from "class-validator";
+import { Category } from "src/modules/category/entities/category.entity";
 import {
   Address,
   Restaurant,
@@ -24,5 +25,8 @@ export class RegisterRestaurantDto extends Restaurant {
   address: Address;
 
   @IsNotEmpty()
-  image: string;
+  categories: Category[];
+
+  @IsNotEmpty()
+  logo: string;
 }
