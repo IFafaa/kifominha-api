@@ -117,4 +117,13 @@ export class FoodService {
       throw error;
     }
   }
+
+  async removeBy(filter: Partial<Food>) {
+    try {
+      const food = await this.repository.delete(filter);
+      return food;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

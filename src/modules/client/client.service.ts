@@ -81,7 +81,7 @@ export class ClientService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: ObjectId) {
     try {
       const client = await this.repository.delete(id);
       return client;

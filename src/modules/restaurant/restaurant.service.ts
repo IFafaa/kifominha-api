@@ -3,12 +3,14 @@ import { Restaurant } from "./entities/restaurant.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ObjectId } from "mongodb";
+import { FoodService } from "../food/food.service";
 
 @Injectable()
 export class RestaurantService {
   constructor(
     @InjectRepository(Restaurant)
     private readonly repository: Repository<Restaurant>,
+    private readonly foodService: FoodService,
   ) {}
 
   async create(_restaurant: Omit<Restaurant, "_id">): Promise<Restaurant> {
@@ -112,8 +114,9 @@ export class RestaurantService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: ObjectId) {
     try {
+      await this.foodService.removeBy({ restaurant_id: id });
       const restaurant = await this.repository.delete(id);
       return restaurant;
     } catch (error) {
