@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from "@nestjs/common";
+import { Controller, Delete, Get, Param, Query } from "@nestjs/common";
 import { RestaurantService } from "./restaurant.service";
 import { ApiTags } from "@nestjs/swagger";
 import { ObjectId } from "typeorm";
@@ -37,8 +37,8 @@ export class RestaurantController {
   //   return await this.restaurantService.update(id, updateUserDto);
   // }
 
-  // @Delete(":id")
-  // async remove(@Param("id") id: ObjectId) {
-  //   return await this.restaurantService.remove(+id);
-  // }
+  @Delete(":id")
+  async remove(@Param("id") id: ObjectId) {
+    return await this.restaurantService.remove(id);
+  }
 }
