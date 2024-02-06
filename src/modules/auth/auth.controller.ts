@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from "@nestjs/common";
+import { Body, Controller, Param, Post, UseInterceptors } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AuthService } from "./auth.service";
 import { RegisterClientDto } from "./dtos/register-client.dto";
@@ -6,6 +6,7 @@ import { ObjectId } from "typeorm";
 import { AuthEmailDto } from "./dtos/auth-email.dto";
 import { RegisterRestaurantDto } from "./dtos/register-restaurant.dto";
 import { LoginDto } from "./dtos/login.dto";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -23,6 +24,7 @@ export class AuthController {
   }
 
   @Post("register/restaurant")
+  @UseInterceptors(FileInterceptor("logo"))
   async registerRestaurant(
     @Body() registerRestaurantDto: RegisterRestaurantDto,
   ) {
@@ -45,5 +47,12 @@ export class AuthController {
     @Body() authEmailDto: AuthEmailDto,
   ) {
     return await this.authService.authRestaurantEmail(id, authEmailDto.code);
+  }
+
+  @Post("send/email/:id")
+  async sendAuthEmail(
+    @Param("id") id: ObjectId,
+  ) {
+    return await this.authService.sendAuthEmail(id);
   }
 }

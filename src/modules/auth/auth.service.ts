@@ -16,6 +16,8 @@ import { LoginDto } from "./dtos/login.dto";
 import * as bcrypt from "bcrypt";
 import { ClientService } from "../client/client.service";
 import { Client } from "../client/entities/client.entity";
+import { FirebaseService } from "src/common/services/firebase.service";
+import { ENUM_USER_TYPE } from "src/common/enums/user-type.enum";
 
 @Injectable()
 export class AuthService {
@@ -24,6 +26,7 @@ export class AuthService {
     private readonly emailService: EmailService,
     private readonly restaurantService: RestaurantService,
     private readonly tokenService: TokenService,
+    private readonly firebaseService: FirebaseService,
   ) {}
 
   async registerClient(_client: RegisterClientDto) {
@@ -84,8 +87,11 @@ export class AuthService {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(_restaurant.password, salt);
 
+      const url = await this.firebaseService.uploadImage(_restaurant.logo);
+
       const restaurant: Omit<Restaurant, "_id"> = {
         ..._restaurant,
+        logo: url,
         auth: {
           email: {
             authenticated: false,
@@ -187,9 +193,16 @@ export class AuthService {
 
       if (!client.auth.email.authenticated) {
         await this.sendVerificationEmail(client);
+        let typeUser: ENUM_USER_TYPE;
+        if (client instanceof Client) typeUser = ENUM_USER_TYPE.client;
+        if (client instanceof Restaurant) typeUser = ENUM_USER_TYPE.restaurant;
         throw new BadRequestException({
           message:
             "Você ainda não verificou seu e-mail, foi enviado um código para o seu e-mail para a verificação.",
+          data: {
+            id: client._id,
+            type: typeUser,
+          },
         });
       }
       return {
@@ -202,18 +215,31 @@ export class AuthService {
     }
   }
 
-  async sendVerificationEmail(client: Client | Restaurant) {
+  async sendAuthEmail(id: ObjectId) {
+    try {
+      const user =
+        (await this.clientService.findOneById(id)) ||
+        (await this.restaurantService.findOneById(id));
+      await this.sendVerificationEmail(user);
+
+      return {
+        message: "E-mail enviado com sucesso!",
+      };
+    } catch (error) {}
+  }
+
+  async sendVerificationEmail(user: Client | Restaurant) {
     try {
       const verificationCode = CodeHelper.verificationCode();
-      client.auth.email.code = verificationCode;
-      if (client instanceof Client) {
-        await this.clientService.update(client._id, client);
+      user.auth.email.code = verificationCode;
+      if (user instanceof Client) {
+        await this.clientService.update(user._id, user);
       }
-      if (client instanceof Restaurant) {
-        await this.restaurantService.update(client._id, client);
+      if (user instanceof Restaurant) {
+        await this.restaurantService.update(user._id, user);
       }
       return await this.emailService.sendEmail(
-        client.email,
+        user.email,
         "Confirme seu endereço de e-mail - Código de Verificação",
         verificationEmailTemplate(verificationCode),
       );
