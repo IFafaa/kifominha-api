@@ -31,4 +31,7 @@ export class Client {
 
   @Column("auth")
   auth: ClientAuth;
+
+  @Column("created_at")
+  created_at: Date;
 }
