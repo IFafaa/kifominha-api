@@ -77,7 +77,6 @@ export class ClientService {
 
       return updatedClient;
     } catch (error) {
-      console.log("Error", error);
       throw error;
     }
   }

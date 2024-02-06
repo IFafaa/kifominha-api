@@ -6,8 +6,6 @@ export class UploadService {
   constructor(private readonly firebaseService: FirebaseService) {}
 
   async uploadImage(file): Promise<string> {
-    console.log("file depois", file);
-
     const storage = this.firebaseService.getStorageInstance();
     const bucket = storage.bucket();
 
