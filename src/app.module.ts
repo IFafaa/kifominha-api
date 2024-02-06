@@ -28,6 +28,7 @@ export class AppModule implements NestModule {
         "auth/register/restaurant",
         "auth/verify/client/email/:id",
         "auth/verify/restaurant/email/:id",
+        "auth/send/email/:id",
         "category",
       )
       .forRoutes("*");
