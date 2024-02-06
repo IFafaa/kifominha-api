@@ -5,6 +5,7 @@ import { AuthModule } from "./modules/auth/auth.module";
 import { AuthMiddleware } from "./common/middlewares/auth.middleware";
 import { FoodModule } from "./modules/food/food.module";
 import { CategoryModule } from "./modules/category/category.module";
+import { UploadModule } from "./modules/upload/upload.module";
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { CategoryModule } from "./modules/category/category.module";
     AuthModule,
     FoodModule,
     CategoryModule,
+    UploadModule,
   ],
   controllers: [],
   providers: [],
@@ -30,6 +32,7 @@ export class AppModule implements NestModule {
         "auth/verify/restaurant/email/:id",
         "auth/send/email/:id",
         "category",
+        "upload/image"
       )
       .forRoutes("*");
   }

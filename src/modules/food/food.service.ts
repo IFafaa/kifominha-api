@@ -4,14 +4,14 @@ import { Repository } from "typeorm";
 import { ObjectId } from "mongodb";
 import { Food } from "./entities/food.entity";
 import { Restaurant } from "../restaurant/entities/restaurant.entity";
-import { FirebaseService } from "src/common/services/firebase.service";
+import { UploadService } from "../upload/upload.service";
 
 @Injectable()
 export class FoodService {
   constructor(
     @InjectRepository(Food)
     private readonly repository: Repository<Food>,
-    private readonly firebaseService: FirebaseService,
+    private readonly uploadService: UploadService,
   ) {}
 
   async create(
@@ -20,16 +20,7 @@ export class FoodService {
   ): Promise<Food> {
     try {
       _food.restaurant_id = restaurant._id;
-
-      // const fileName = `${_food.name.replace(
-      //   /\s/g,
-      //   "",
-      // )}_${new Date().getTime()}`;
-      const url = await this.firebaseService.uploadImage(
-        _food.image,
-        // fileName,
-      );
-      _food.image = url;
+      _food.image = await this.uploadService.uploadImage(_food.image);
       const food = await this.repository.create(_food);
       return this.repository.save(food);
     } catch (error) {

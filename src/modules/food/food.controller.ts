@@ -8,6 +8,8 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from "@nestjs/common";
 import { FoodService } from "./food.service";
 import { ApiTags } from "@nestjs/swagger";
@@ -15,6 +17,7 @@ import { ObjectId } from "typeorm";
 import { CreateFoodDto } from "./dtos/create-food.dto";
 import { Restaurant } from "../restaurant/entities/restaurant.entity";
 import { Food } from "./entities/food.entity";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @ApiTags("Comidas")
 @Controller("food")
@@ -22,11 +25,13 @@ export class FoodController {
   constructor(private readonly foodService: FoodService) {}
 
   @Post()
+  @UseInterceptors(FileInterceptor("image"))
   async create(
-    @Body() body: CreateFoodDto,
+    @UploadedFile() file,
+    @Body() food: CreateFoodDto,
     @Headers("user") restaurant: Restaurant,
   ) {
-    return this.foodService.create(body, restaurant);
+    return this.foodService.create({ ...food, image: file }, restaurant);
   }
 
   // @Get()

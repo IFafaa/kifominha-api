@@ -27,6 +27,5 @@ export class RegisterRestaurantDto extends Restaurant {
   @IsNotEmpty()
   categories: Category[];
 
-  @IsNotEmpty()
   logo: string;
 }

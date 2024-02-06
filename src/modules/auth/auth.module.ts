@@ -7,7 +7,7 @@ import { RestaurantModule } from "../restaurant/restaurant.module";
 import { TokenService } from "src/common/services/token.service";
 import { JwtModule } from "@nestjs/jwt";
 import { ClientModule } from "../client/client.module";
-import { FirebaseService } from "src/common/services/firebase.service";
+import { UploadModule } from "../upload/upload.module";
 
 @Module({
   imports: [
@@ -19,8 +19,9 @@ import { FirebaseService } from "src/common/services/firebase.service";
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
     }),
+    UploadModule,
   ],
-  providers: [AuthService, EmailService, TokenService, FirebaseService],
+  providers: [AuthService, EmailService, TokenService],
   controllers: [AuthController],
 })
 export class AuthModule {}

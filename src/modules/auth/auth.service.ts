@@ -16,8 +16,8 @@ import { LoginDto } from "./dtos/login.dto";
 import * as bcrypt from "bcrypt";
 import { ClientService } from "../client/client.service";
 import { Client } from "../client/entities/client.entity";
-import { FirebaseService } from "src/common/services/firebase.service";
 import { ENUM_USER_TYPE } from "src/common/enums/user-type.enum";
+import { UploadService } from "../upload/upload.service";
 
 @Injectable()
 export class AuthService {
@@ -26,7 +26,7 @@ export class AuthService {
     private readonly emailService: EmailService,
     private readonly restaurantService: RestaurantService,
     private readonly tokenService: TokenService,
-    private readonly firebaseService: FirebaseService,
+    private readonly uploadService: UploadService,
   ) {}
 
   async registerClient(_client: RegisterClientDto) {
@@ -87,11 +87,12 @@ export class AuthService {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(_restaurant.password, salt);
 
-      const url = await this.firebaseService.uploadImage(_restaurant.logo);
+      _restaurant.logo = await await this.uploadService.uploadImage(
+        _restaurant.logo,
+      );
 
       const restaurant: Omit<Restaurant, "_id"> = {
         ..._restaurant,
-        logo: url,
         auth: {
           email: {
             authenticated: false,

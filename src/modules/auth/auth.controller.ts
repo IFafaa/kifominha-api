@@ -1,4 +1,11 @@
-import { Body, Controller, Param, Post, UseInterceptors } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Param,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AuthService } from "./auth.service";
 import { RegisterClientDto } from "./dtos/register-client.dto";
@@ -26,11 +33,13 @@ export class AuthController {
   @Post("register/restaurant")
   @UseInterceptors(FileInterceptor("logo"))
   async registerRestaurant(
-    @Body() registerRestaurantDto: RegisterRestaurantDto,
+    @UploadedFile() file,
+    @Body() restaurant: RegisterRestaurantDto,
   ) {
-    return await await this.authService.registerRestaurant(
-      registerRestaurantDto,
-    );
+    return await await this.authService.registerRestaurant({
+      ...restaurant,
+      logo: file,
+    });
   }
 
   @Post("verify/client/email/:id")
@@ -50,9 +59,7 @@ export class AuthController {
   }
 
   @Post("send/email/:id")
-  async sendAuthEmail(
-    @Param("id") id: ObjectId,
-  ) {
+  async sendAuthEmail(@Param("id") id: ObjectId) {
     return await this.authService.sendAuthEmail(id);
   }
 }
