@@ -61,6 +61,30 @@ export class RestaurantService {
     }
   }
 
+  async findAllBy(filter: Partial<Restaurant>): Promise<Restaurant[]> {
+    try {
+      const restaurants = await this.findAll();
+
+      for (const key in filter) {
+        if (
+          filter[key] === "undefined" ||
+          filter[key] === null ||
+          filter[key] === undefined
+        ) {
+          delete filter[key];
+        }
+      }
+      if (filter.name) {
+        return restaurants.filter((food) =>
+          food.name.toLowerCase().includes(filter.name.toLowerCase()),
+        );
+      }
+      return restaurants;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async findOneById(id: ObjectId): Promise<Restaurant> {
     try {
       const restaurant = await this.repository.findOne({

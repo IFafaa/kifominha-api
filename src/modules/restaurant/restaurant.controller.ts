@@ -1,7 +1,8 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param, Query } from "@nestjs/common";
 import { RestaurantService } from "./restaurant.service";
 import { ApiTags } from "@nestjs/swagger";
 import { ObjectId } from "typeorm";
+import { Restaurant } from "./entities/restaurant.entity";
 
 @ApiTags("Restaurante")
 @Controller("restaurant")
@@ -13,9 +14,14 @@ export class RestaurantController {
   //   return this.restaurantService.create(body);
   // }
 
+  // @Get()
+  // async findAll() {
+  //   return await this.restaurantService.findAll();
+  // }
+
   @Get()
-  async findAll() {
-    return await this.restaurantService.findAll();
+  async findAllBy(@Query() params: Partial<Restaurant>) {
+    return await this.restaurantService.findAllBy(params);
   }
 
   @Get(":id")
