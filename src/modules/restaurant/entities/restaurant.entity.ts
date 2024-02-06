@@ -50,4 +50,7 @@ export class Restaurant {
 
   @Column("logo")
   logo: string;
+
+  @Column("created_at")
+  created_at: Date;
 }

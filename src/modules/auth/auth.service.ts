@@ -48,6 +48,7 @@ export class AuthService {
 
       const client: Omit<Client, "_id"> = {
         ..._client,
+        created_at: new Date(),
         auth: {
           email: {
             authenticated: false,
@@ -93,6 +94,7 @@ export class AuthService {
 
       const restaurant: Omit<Restaurant, "_id"> = {
         ..._restaurant,
+        created_at: new Date(),
         auth: {
           email: {
             authenticated: false,
