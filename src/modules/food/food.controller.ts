@@ -55,11 +55,13 @@ export class FoodController {
   }
 
   @Put(":id")
+  @UseInterceptors(FileInterceptor("image"))
   async update(
+    @UploadedFile() file,
     @Param("id") id: ObjectId,
     @Body() updateFoodDto: Partial<Food>,
   ) {
-    return await this.foodService.update(id, updateFoodDto);
+    return await this.foodService.update(id, { ...updateFoodDto, image: file });
   }
 
   @Delete(":id")

@@ -91,6 +91,11 @@ export class FoodService {
 
   async update(id: ObjectId, _food: Partial<Food>) {
     try {
+      if (_food.image !== undefined) {
+        _food.image = await this.uploadService.uploadImage(_food.image);
+      } else {
+        delete _food.image;
+      }
       const food = await this.findOneById(id);
       if (!food) {
         return null;
