@@ -1,73 +1,66 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Teste Angular Gastronomia
+## Objetivo
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Suponha que você tenha sido solicitado a desenvolver 
+uma plataforma no ramo de gastronomia. O cliente 
+solicitou um MVP para validar seu conhecimento
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Pré-requisitos
+Certifique-se de ter as seguintes ferramentas instaladas em seu ambiente de desenvolvimento:
 
-## Description
+* Node.js (versão 20 ou superior)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Iniciando o projeto
+Siga as etapas abaixo para iniciar o projeto em sua máquina local:
 
-## Installation
+Clone este repositório para o diretório desejado em sua máquina:
 
-```bash
-$ npm install
+```
+git clone https://github.com/IFafaa/kifominha-api
 ```
 
-## Running the app
+Navegue até o diretório do projeto:
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```
+cd kifominha-api
 ```
 
-## Test
+Altere o ambiente para o ambiente de desenvolvimento:
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```
+git checkout develop
 ```
 
-## Support
+Instale as dependências do projeto utilizando o npm (gerenciador de pacotes do Node.js):
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```
+npm install
+```
 
-## Stay in touch
+Após a conclusão da instalação das dependências, você pode iniciar o servidor de desenvolvimento executando o seguinte comando:
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```
+npm run start:dev
+```
 
-## License
+O servidor de desenvolvimento será iniciado e estará disponível no endereço http://localhost:4200/. Acesse este endereço em seu navegador para ver o aplicativo em execução.
 
-Nest is [MIT licensed](LICENSE).
+## Estrutura
+
+O projeto utiliza de uma estrutura de pastas a nivel de modulos com as principais pastas sendo:
+
+* <b>Database</b>: Esta pasta contém arquivos essenciais para a integração com um banco de dados. Aqui, você pode encontrar scripts de criação de banco de dados, arquivos de configuração de conexão ou até mesmo arquivos de migração de banco de dados.
+
+* <b>Common</b>: Onde ficarão os arquivos utilizados em todo o projeto - Ex: Enums, Helpers, interfaces, middlewares, services, templates;
+
+* <b>Modules</b>: São as páginas do nosso projeto onde estarão os fluxos.
+
+Dentro de um módulo, é comum criar segmentos de pastas adicionais para organizar os diferentes tipos de artefatos que são específicos daquele módulo. Alguns exemplos comuns de segmentos de pastas dentro de um módulo incluem  <b>Dtos</b>,  <b>Entities</b>,
+
+* <b>Dtos</b>: O segmento de pastas Dtos é usado para realizar a validacao das requests.
+
+* <b>Entities</b>: O segmento de pastas Entities é usado para armazenar as entidades do meu BD.
+
+
+A criação desses segmentos de pastas ajuda a manter uma estrutura organizada do código, tornando mais fácil encontrar e gerenciar os diferentes artefatos relacionados ao módulo. Cada módulo pode ter sua própria estrutura de pastas específica, dependendo das necessidades e complexidade do aplicativo. Deixando ela escalavel para novos modulos caso o projeto necessite
+
