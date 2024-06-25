@@ -54,7 +54,10 @@ Instale as dependências do projeto utilizando o npm (gerenciador de pacotes do 
 npm install
 ```
 
-Após a conclusão da instalação das dependências, você pode iniciar o servidor de desenvolvimento executando o seguinte comando:
+Após a conclusão da instalação das dependências, você deve criar um arquivo .env.dev e inserir as variáveis de ambiente que estão presentes no arquivo .env.example (modelo):
+
+
+Após isso, você pode iniciar o servidor de desenvolvimento executando o seguinte comando:
 
 ```
 npm run start:dev
